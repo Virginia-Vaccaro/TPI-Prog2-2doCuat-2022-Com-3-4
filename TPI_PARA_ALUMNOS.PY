@@ -28,6 +28,7 @@ class ProgramaPrincipal:
                 precio = input("Por favor ingrese el nuevo precio: ")
                 automovil_a_modificar = Automovil(marca, modelo, precio)
                 automovil_a_modificar.modificar_automoviles()
+
             if nro == 3:
                 marca = input("Por favor ingrese el nombre de la marca: ")
                 modelo = input("Por favor ingrese el nombre del modelo: ")
@@ -67,9 +68,9 @@ class Automovil:
             conexion.miCursor.execute("INSERT INTO AUTOMOVILES(marca,modelo,precio,cantidadDisponibles) VALUES('{}', '{}','{}','{}')".format(
                 self.marca, self.modelo, self.precio, self.cantidadDisponibles))
             conexion.miConexion.commit()
-            print("Automovil cargado exitosamente")
+            print("Automóvil cargado exitosamente")
         except:
-            print("Error al agregar un automovil")
+            print("Error al agregar un automóvil")
         finally:
             conexion.cerrarConexion()
 
@@ -80,9 +81,9 @@ class Automovil:
             conexion.miCursor.execute("UPDATE AUTOMOVILES SET precio='{}' where marca='{}' and modelo='{}' ".format(
                 self.precio, self.marca, self.modelo))
             conexion.miConexion.commit()
-            print("Automovil modificado correctamente")
+            print("Automóvil modificado correctamente")
         except:
-            print('Error al actualizar un automovil')
+            print('Error al actualizar un automóvil')
         finally:
             conexion.cerrarConexion()
 
@@ -128,7 +129,6 @@ class Automovil:
             print('Error al mostrar los autos')
         finally:
             conexion.cerrarConexion()
-
 
 class Conexiones:
 
