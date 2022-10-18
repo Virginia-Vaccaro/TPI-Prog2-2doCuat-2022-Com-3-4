@@ -83,7 +83,7 @@ class Automovil:
         conexion = Conexiones()
         conexion.abrirConexion()
         try:
-            conexion.miCursor.execute("DELETE AUTOMOVIL ") ######################################
+            conexion.miCursor.execute("DELETE FROM AUTOMOVIL where marca='{}' and modelo='{}' ".format(self.marca,self.modelo))
             conexion.miConexion.commit
             print("Automóvil eliminado correctamente")
         except:
@@ -95,8 +95,8 @@ class Automovil:
     def cargar_disponibilidad(self):
         conexion = Conexiones()
         conexion.abrirConexion()
-        try:
-            conexion.miCursor.execute(" ") ######################################
+        try:                                                     ###Completar####
+            conexion.miCursor.execute("UPDATE AUTOMOVILES SET cantidadDisponibles=          where marca='{}' and modelo='{}' ".format(self.cantidadDisponibles, self.marca,self.modelo))
             conexion.miConexion.commit
             print("Se ha actualizado la disponibilidad correctamente")
         except:
@@ -109,7 +109,7 @@ class Automovil:
         conexion = Conexiones()
         conexion.abrirConexion()
         try:
-            conexion.miCursor.execute(" ") ######################################
+            conexion.miCursor.execute(" ") #########Completar##############
             conexion.miConexion.commit
             print("Lista ordenada de automóviles")
         except:
