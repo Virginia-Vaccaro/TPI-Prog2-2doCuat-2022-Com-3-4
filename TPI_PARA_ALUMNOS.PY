@@ -22,6 +22,19 @@ class ProgramaPrincipal:
                 precio = input("Por favor ingrese el nuevo precio: ")
                 automovil_a_modificar=Automovil(marca,modelo,precio)
                 automovil_a_modificar.modificar_automoviles()
+            if nro==3:
+                marca = input("Por favor ingrese el nombre de la marca: ")
+                modelo = input("Por favor ingrese el nombre del modelo: ")
+                automovil_a_eliminar = Automovil(marca,modelo)
+                automovil_a_eliminar.borrar_automovil()
+            if nro==4:
+                marca = input("Por favor ingrese el nombre de la marca: ")
+                modelo = input("Por favor ingrese el nombre del modelo: ")
+                automovil_disponibilidad = Automovil(marca,modelo)
+                automovil_disponibilidad.cargar_disponibilidad()
+            if nro==5:
+                automovil_ordenado = Automovil()
+                automovil_ordenado.listado_automoviles()
             if nro==0:
                 break
     
@@ -46,9 +59,9 @@ class Automovil:
         try:
             conexion.miCursor.execute("INSERT INTO AUTOMOVILES(marca,modelo,precio,cantidadDisponibles) VALUES('{}', '{}','{}','{}')".format(self.marca, self.modelo,self.precio,self.cantidadDisponibles))
             conexion.miConexion.commit()
-            print("Automovil cargado exitosamente")
+            print("Automóvil cargado exitosamente")
         except:
-            print("Error al agregar un automovil")
+            print("Error al agregar un automóvil")
         finally:
             conexion.cerrarConexion()
     
@@ -59,11 +72,50 @@ class Automovil:
         try:
             conexion.miCursor.execute("UPDATE AUTOMOVILES SET precio='{}' where marca='{}' and modelo='{}' ".format(self.precio,self.marca,self.modelo))
             conexion.miConexion.commit()
-            print("Automovil modificado correctamente")
+            print("Automóvil modificado correctamente")
         except:
-            print('Error al actualizar un automovil')
+            print('Error al actualizar un automóvil')
         finally:
-            conexion.cerrarConexion()  
+            conexion.cerrarConexion()
+
+
+    def borrar_automovil(self):
+        conexion = Conexiones()
+        conexion.abrirConexion()
+        try:
+            conexion.miCursor.execute("DELETE AUTOMOVIL ") ######################################
+            conexion.miConexion.commit
+            print("Automóvil eliminado correctamente")
+        except:
+            print('Error al eliminar un automóvil')
+        finally:
+            conexion.cerrarConexion() 
+
+
+    def cargar_disponibilidad(self):
+        conexion = Conexiones()
+        conexion.abrirConexion()
+        try:
+            conexion.miCursor.execute(" ") ######################################
+            conexion.miConexion.commit
+            print("Se ha actualizado la disponibilidad correctamente")
+        except:
+            print('Error al cargar la disponibilidad de un automovil')
+        finally:
+            conexion.cerrarConexion()
+
+
+    def listado_automoviles(self):
+        conexion = Conexiones()
+        conexion.abrirConexion()
+        try:
+            conexion.miCursor.execute(" ") ######################################
+            conexion.miConexion.commit
+            print("Lista ordenada de automóviles")
+        except:
+            print('Error al mostrar la lista de automóviles')
+        finally:
+            conexion.cerrarConexion()
         
     
 class Conexiones:
