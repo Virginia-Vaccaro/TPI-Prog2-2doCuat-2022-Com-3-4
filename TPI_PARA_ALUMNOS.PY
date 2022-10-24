@@ -17,22 +17,25 @@ class ProgramaPrincipal:
                 print("6- Cargar Motocicleta ")
                 print("7- Modificar Precio Motocicleta(10%)")
                 print("8- Mostrar registros de Motos anteriores a cierta fecha ")
+                print("9- Listado de Motocicletas ")
                 print("0- Salir de menu ")
                 nro = int(input("Por favor ingrese un número "))
+            except(ValueError, TypeError):
+                print("Debe ingresar un número entero dentro de las opciones del menú.")
+            else:
+                if nro<0 or nro>9:
+                    print("Debe ingresar un número entero dentro de las opciones del menú.")
                 if nro == 1:
                     marca = input("Por favor ingrese la marca del automovil: ")
                     modelo = input("Por favor ingrese el modelo del automovil: ")
-                    precio = input("Por favor ingrese el precio del automovil: ")
-                    programa.valida_precio(precio)
-                    cantidadDisponibles = input("Por favor ingrese la cantidad de unidades disponibles: ")
-                    programa.valida_disponibilidad(cantidadDisponibles)
+                    precio= programa.valida_precio()
+                    cantidadDisponibles = programa.valida_disponibilidad()
                     nuevo_automovil = Automovil(marca, modelo, precio, cantidadDisponibles)
                     nuevo_automovil.cargar_automovil()
                 if nro == 2:
                     marca = input("Por favor ingrese el nombre de la marca: ")
                     modelo = input("Por favor ingrese el nombre del modelo: ")
-                    precio = input("Por favor ingrese el nuevo precio: ")
-                    programa.valida_precio(precio)
+                    precio= programa.valida_precio()
                     automovil_a_modificar = Automovil(marca, modelo, precio)
                     automovil_a_modificar.modificar_automoviles()
                 if nro == 3:
@@ -50,11 +53,9 @@ class ProgramaPrincipal:
                 if nro == 6:
                     marca = input("Por favor ingrese la marca de la motocicleta: ")
                     modelo = input("Por favor ingrese el modelo de la motocicleta: ")
-                    precio = input("Por favor ingrese el precio de la motocicleta: ")
-                    programa.valida_precio(precio)
+                    precio= programa.valida_precio()
                     cilindrada = input("Por favor ingrese la cilindrada la motocicleta: ")
-                    color = input("Por favor ingrese el color de la motocicleta: ")
-                    programa.valida_color(color)
+                    color = programa.valida_color()
                     fechaUltimoPrecio = date.today()
                     nueva_motocicleta = Motocicleta(marca,modelo,precio, cilindrada, color, fechaUltimoPrecio)
                     nueva_motocicleta.cargar_motocicletas()
@@ -63,12 +64,14 @@ class ProgramaPrincipal:
                     Motocicleta.actualizar_precios()
                 if nro == 8:
                     fecha = input("Por favor, ingrese una fecha en el siguiente formato (AAAA-MM-DD): ") 
-                    Motocicleta.mostrar_anteriores(fecha)    
+                    Motocicleta.mostrar_anteriores(fecha)
+                if nro == 9:
+                    Motocicleta.mostrar_motocicletas()    
                 if nro == 0:
-                    break
-            except:
-                print("Número ingresado incorrecto. Intente nuevamente.")
+                   print("Cerrando programa.")
+                   break
 
+            
     def crearTablas(self):
         conexion = Conexiones()
         conexion.abrirConexion()
@@ -81,7 +84,7 @@ class ProgramaPrincipal:
         conexion = Conexiones()
         conexion.abrirConexion()
         conexion.miCursor.execute("DROP TABLE IF EXISTS MOTOCICLETAS")
-        conexion.miCursor.execute("CREATE TABLE MOTOCICLETAS (id_moto INTEGER PRIMARY KEY , modelo  VARCHAR(30), marca  VARCHAR(30), cilindrada  VARCHAR(30), precio INTEGER NOT NULL, color  VARCHAR(30), cantidadDisponibles INTEGER NOT NULL, fechaUltimoPrecio DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)")   
+        conexion.miCursor.execute("CREATE TABLE MOTOCICLETAS (id_moto INTEGER PRIMARY KEY , marca  VARCHAR(30), modelo  VARCHAR(30), precio INTEGER NOT NULL, cilindrada  VARCHAR(30), color  VARCHAR(30), fechaUltimoPrecio DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)")   
         conexion.miConexion.commit()       
         conexion.cerrarConexion()
         
@@ -93,33 +96,43 @@ class ProgramaPrincipal:
         conexion.miConexion.commit()
         conexion.cerrarConexion()  
     
-    def valida_precio(self, precio):
+    def valida_precio(self):
         while True:
             try:
-                if type(precio)==float and precio>0:
-                    return precio
-            except:
-                print("Debe ingresar un valor numérico positivo. Vuelve a ingresarlo: ")
-                continue
-            
-
-    def valida_disponibilidad(self, cantidadDisponible):
-        while True:
-            try:
-                if cantidadDisponible >0 and type(cantidadDisponible) == int:
-                    return cantidadDisponible
+                precio1 = float(input("Por favor ingrese el precio: "))
             except ValueError:
-                print("Debe ingresar un valor entero positivo. Vuelve a ingresarlo.")
-            continue
+                print("Debe ingresar un valor numérico positivo.")
+            else:
+                if precio1<0:
+                    print("Debe ingresar un número positivo.")
+                if precio1>0:
+                    return precio1
+                    
+                
+    def valida_disponibilidad(self):
+        while True:
+            try:
+                cantidadDisponibles1 = int(input("Por favor ingrese la cantidad de unidades disponibles: "))
+            except ValueError:
+                print("Debe ingresar un valor entero positivo.")
+            else:
+                if cantidadDisponibles1<0:
+                    print("Debe ingresar un número positivo.")
+                if cantidadDisponibles1 >0:
+                    return cantidadDisponibles1
 
     
-    def valida_color(self, color):
+    def valida_color(self):
         while True:
             try:
-                if type(color) == str:
-                    return color
-            except:
+                color = str(input("Por favor ingrese el color de la motocicleta: "))
+            except TypeError:
                 print("Debe ingresar un color. Vuelve a intentarlo.")
+            else:
+                if color.isalpha():
+                    return color
+                else:
+                    print("Error.")
 
 
 
@@ -211,7 +224,7 @@ class Motocicleta:
         conexion = Conexiones()
         conexion.abrirConexion()
         try:
-            conexion.miCursor.execute("INSERT INTO MOTOCICLETAS (marca,modelo,precio,cilindrada,color,fechaUltimoPrecio) VALUES('{}','{}','{}','{}','{}', date('now'))".format(self.marca,self.modelo,self.precio,self.cilindrada,self.color,self.fechaUltimoPrecio))
+            conexion.miCursor.execute("INSERT INTO MOTOCICLETAS (marca,modelo,precio,cilindrada,color,fechaUltimoPrecio) VALUES('{}','{}','{}','{}','{}', '{}')".format(self.marca,self.modelo,self.precio,self.cilindrada,self.color,self.fechaUltimoPrecio))
             conexion.miConexion.commit()
             print("Motocicleta cargada exitosamente")
         except:
@@ -224,7 +237,7 @@ class Motocicleta:
         conexion = Conexiones()
         conexion.abrirConexion()
         try:
-            conexion.miCursor.execute("UPDATE MOTOCICLETAS SET precio= 'precio + (precio*0.1)', fechaUltimoPrecio= 'date(now)'")
+            conexion.miCursor.execute("UPDATE MOTOCICLETAS SET precio= '{precio + (precio*0.1)}', fechaUltimoPrecio= 'date(now)'")
             conexion.miConexion.commit()
             print("Motocicleta modificado correctamente")
         except:
@@ -261,6 +274,20 @@ class Motocicleta:
             print("No hay registros anteriores a la fecha ingresada.")
         finally:
             conexion.cerrarConexion
+    
+    @classmethod
+    def mostrar_motocicletas(cls):
+        conexion = Conexiones()
+        conexion.abrirConexion()
+        try:
+            conexion.miCursor.execute("SELECT * FROM MOTOCICLETAS")
+            motos = conexion.miCursor.fetchall()
+            for moto in motos:
+                print(f" ID : {moto[0]}\n Marca : {moto[1]}\n Modelo : {moto[2]}\n Precio : {moto[3]}\n Cilindrada : {moto[4]}\n Color : {moto[5]}\n Fecha : {moto[6]}")
+        except:
+            print("Error al mostrar motocicletas")
+        finally:
+            conexion.cerrarConexion()
 
 
 
