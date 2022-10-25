@@ -184,7 +184,7 @@ class Automovil:
         conexion = Conexiones()
         conexion.abrirConexion()
         try:
-            conexion.miCursor.execute("UPDATE AUTOMOVILES SET cantidadDisponibles='cantidadDisponibles + 1' where marca='{}' and modelo='{}'".format(self.cantidadDisponibles,self.marca, self.modelo))
+            conexion.miCursor.execute("UPDATE AUTOMOVILES SET cantidadDisponibles=cantidadDisponibles+1 where marca='{}' and modelo='{}'".format(self.cantidadDisponibles,self.marca, self.modelo))
             conexion.miConexion.commit()
             print("Cantidad disponible del auto modificada correctamente")
         except:
