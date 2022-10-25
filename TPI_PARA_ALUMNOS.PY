@@ -1,6 +1,9 @@
 from datetime import date
 from multiprocessing.sharedctypes import Value
 import sqlite3
+from conexiones import Conexiones
+from automoviles import Automovil
+from motocicletas import Motocicleta
 
 
 class ProgramaPrincipal:
@@ -78,23 +81,14 @@ class ProgramaPrincipal:
         conexion.miCursor.execute("DROP TABLE IF EXISTS AUTOMOVILES")
         conexion.miCursor.execute("CREATE TABLE AUTOMOVILES (id_automovil INTEGER PRIMARY KEY , marca  VARCHAR(30) ,modelo  VARCHAR(30),precio FLOAT NOT NULL, cantidadDisponibles INTEGER NOT NULL,UNIQUE(marca,modelo))")
         conexion.miConexion.commit()
-        conexion.cerrarConexion()
-
-    def crearTablasMotocicletas(self):
-        conexion = Conexiones()
-        conexion.abrirConexion()
         conexion.miCursor.execute("DROP TABLE IF EXISTS MOTOCICLETAS")
         conexion.miCursor.execute("CREATE TABLE MOTOCICLETAS (id_moto INTEGER PRIMARY KEY , marca  VARCHAR(30), modelo  VARCHAR(30), precio INTEGER NOT NULL, cilindrada  VARCHAR(30), color  VARCHAR(30), fechaUltimoPrecio DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)")   
-        conexion.miConexion.commit()       
-        conexion.cerrarConexion()
-        
-    def crearTablasMotoHis(self):
-        conexion = Conexiones()
-        conexion.abrirConexion()
+        conexion.miConexion.commit()
         conexion.miCursor.execute("DROP TABLE IF EXISTS HISTORICO_MOTOCICLETAS")
         conexion.miCursor.execute("CREATE TABLE HISTORICO_MOTOCICLETAS (id_moto INTEGER , marca  VARCHAR(30) ,modelo  VARCHAR(30),precio INTEGER, cilindrada VARCHAR(30), color VARCHAR(30), fechaUltimoPrecio DATETIME)")
         conexion.miConexion.commit()
-        conexion.cerrarConexion()  
+        conexion.cerrarConexion()
+ 
     
     def valida_precio(self):
         while True:
@@ -132,177 +126,10 @@ class ProgramaPrincipal:
                 if color.isalpha():
                     return color
                 else:
-                    print("Error.")
+                    print("Error, color inválido.")
 
-
-
-
-class Automovil:
-    def __init__(self, marca, modelo, precio=None, cantidadDisponibles=None):
-        self.marca = marca
-        self.modelo = modelo
-        self.precio = precio
-        self.cantidadDisponibles = cantidadDisponibles
-
-    def cargar_automovil(self):
-        conexion = Conexiones()
-        conexion.abrirConexion()
-        try:
-            conexion.miCursor.execute("INSERT INTO AUTOMOVILES(marca,modelo,precio,cantidadDisponibles) VALUES('{}', '{}','{}','{}')".format(self.marca, self.modelo, self.precio, self.cantidadDisponibles))
-            conexion.miConexion.commit()
-            print("Automóvil cargado exitosamente")
-        except:
-            print("Error al agregar un automóvil")
-        finally:
-            conexion.cerrarConexion()
-
-    def modificar_automoviles(self):
-        conexion = Conexiones()
-        conexion.abrirConexion()
-        try:
-            conexion.miCursor.execute("UPDATE AUTOMOVILES SET precio='{}' where marca='{}' and modelo='{}' ".format(self.precio, self.marca, self.modelo))
-            conexion.miConexion.commit()
-            print("Automóvil modificado correctamente")
-        except:
-            print('Error al actualizar un automóvil')
-        finally:
-            conexion.cerrarConexion()
-
-    def borrar_auto(self):
-        conexion = Conexiones()
-        conexion.abrirConexion()
-        try:
-            conexion.miCursor.execute("DELETE FROM AUTOMOVILES where marca='{}' and modelo='{}' ".format(self.marca, self.modelo))
-            conexion.miConexion.commit()
-            print("Automovil eliminado correctamente")
-        except:
-            print('Error al borrar un automovil')
-        finally:
-            conexion.cerrarConexion()
-
-    def modificar_disponibilidad(self):
-        conexion = Conexiones()
-        conexion.abrirConexion()
-        try:
-            conexion.miCursor.execute("UPDATE AUTOMOVILES SET cantidadDisponibles=cantidadDisponibles+1 where marca='{}' and modelo='{}'".format(self.cantidadDisponibles,self.marca, self.modelo))
-            conexion.miConexion.commit()
-            print("Cantidad disponible del auto modificada correctamente")
-        except:
-            print('Error al actualizar la cantidad disponible')
-        finally:
-            conexion.cerrarConexion()
-
-    @classmethod
-    def mostrar_autos(cls):
-        conexion = Conexiones()
-        conexion.abrirConexion()
-        try:
-            conexion.miCursor.execute("SELECT * FROM AUTOMOVILES")
-            autos = conexion.miCursor.fetchall()
-            # print(autos)
-            for auto in autos:
-                print(f" ID : {auto[0]}\n Marca : {auto[1]}\n Modelo : {auto[2]}\n Precio : {auto[3]}\n Disponibles : {auto[4]}")
-        except:
-            print("Error al mostrar automoviles")
-        finally:
-            conexion.cerrarConexion()
-
-
-
-
-class Motocicleta:
-    def __init__(self, marca, modelo, precio, cilindrada, color, fechaUltimoPrecio):
-        self.marca = marca
-        self.modelo = modelo
-        self.precio = precio
-        self.cilindrada = cilindrada
-        self.color = color
-        self.fechaUltimoPrecio = fechaUltimoPrecio
-
-    
-    def cargar_motocicletas(self):
-        conexion = Conexiones()
-        conexion.abrirConexion()
-        try:
-            conexion.miCursor.execute("INSERT INTO MOTOCICLETAS (marca,modelo,precio,cilindrada,color,fechaUltimoPrecio) VALUES('{}','{}','{}','{}','{}', '{}')".format(self.marca,self.modelo,self.precio,self.cilindrada,self.color,self.fechaUltimoPrecio))
-            conexion.miConexion.commit()
-            print("Motocicleta cargada exitosamente")
-        except:
-            print("Error al agregar la motocicleta")
-        finally:
-            conexion.cerrarConexion()
-     
-    @classmethod
-    def actualizar_precios(cls):
-        conexion = Conexiones()
-        conexion.abrirConexion()
-        try:
-            conexion.miCursor.execute("UPDATE MOTOCICLETAS SET precio= precio + (precio*0.1), fechaUltimoPrecio= CURRENT_TIMESTAMP")
-            conexion.miConexion.commit()
-            print("Motocicleta modificado correctamente")
-        except:
-            print('Error al actualizar una monoticleta')
-        finally:
-            conexion.cerrarConexion() 
-    
-    @classmethod
-    def pasar_historico(cls):
-        conexion = Conexiones()
-        conexion.abrirConexion()
-        try:
-            conexion.miCursor.execute("SELECT * FROM MOTOCICLETAS")
-            motos = conexion.miCursor.fetchall()
-            for moto in motos:
-                id, marca, modelo, precio, cilindrada, color, fechaUltimoPrecio = moto
-                conexion.miCursor.execute("INSERT INTO HISTORICO_MOTOCICLETAS (id_moto, marca, modelo, precio, cilindrada, color, fechaUltimoPrecio) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(id,marca,modelo,precio,cilindrada,color,fechaUltimoPrecio))
-                conexion.miConexion.commit()                
-        except:
-            print("Ha ocurrido un error al pasar los historiales")
-        finally:
-            conexion.cerrarConexion  
-
-    @classmethod
-    def mostrar_anteriores(cls, fecha):
-        conexion = Conexiones()
-        conexion.abrirConexion()
-        try:
-            conexion.miCursor.execute("SELECT * FROM MOTOCICLETA WHERE fechaUltimoPrecio<fecha")
-            motos = conexion.miCursor.fetchall()
-            for moto in motos: 
-                print(f" ID: {moto[0]}\n Marca: {moto[1]}\n Modelo: {moto[2]}\n Precio: {moto[3]}\n Cilindrada: {moto[4]}\n Color: {moto[5]}\n ")
-        except:
-            print("No hay registros anteriores a la fecha ingresada.")
-        finally:
-            conexion.cerrarConexion
-    
-    @classmethod
-    def mostrar_motocicletas(cls):
-        conexion = Conexiones()
-        conexion.abrirConexion()
-        try:
-            conexion.miCursor.execute("SELECT * FROM MOTOCICLETAS")
-            motos = conexion.miCursor.fetchall()
-            for moto in motos:
-                print(f" ID : {moto[0]}\n Marca : {moto[1]}\n Modelo : {moto[2]}\n Precio : {moto[3]}\n Cilindrada : {moto[4]}\n Color : {moto[5]}\n Fecha : {moto[6]}")
-        except:
-            print("Error al mostrar motocicletas")
-        finally:
-            conexion.cerrarConexion()
-
-
-
-class Conexiones:
-
-    def abrirConexion(self):
-        self.miConexion = sqlite3.connect("Concesionaria")
-        self.miCursor = self.miConexion.cursor()
-
-    def cerrarConexion(self):
-        self.miConexion.close()
 
 
 programa = ProgramaPrincipal()
 programa.crearTablas()
-programa.crearTablasMotocicletas()
-programa.crearTablasMotoHis()
 programa.menu()
