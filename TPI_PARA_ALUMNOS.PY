@@ -77,7 +77,7 @@ class ProgramaPrincipal:
         conexion.abrirConexion()
         conexion.miCursor.execute("DROP TABLE IF EXISTS AUTOMOVILES")
         conexion.miCursor.execute("CREATE TABLE AUTOMOVILES (id_automovil INTEGER PRIMARY KEY , marca  VARCHAR(30) ,modelo  VARCHAR(30),precio FLOAT NOT NULL, cantidadDisponibles INTEGER NOT NULL,UNIQUE(marca,modelo))")
-        conexion.miConexion.commit()
+        conexion.miConexion.commit()        
         conexion.cerrarConexion()
 
     def crearTablasMotocicletas(self):
@@ -94,7 +94,7 @@ class ProgramaPrincipal:
         conexion.miCursor.execute("DROP TABLE IF EXISTS HISTORICO_MOTOCICLETAS")
         conexion.miCursor.execute("CREATE TABLE HISTORICO_MOTOCICLETAS (id_moto INTEGER , marca  VARCHAR(30) ,modelo  VARCHAR(30),precio INTEGER, cilindrada VARCHAR(30), color VARCHAR(30), fechaUltimoPrecio DATETIME)")
         conexion.miConexion.commit()
-        conexion.cerrarConexion()  
+        conexion.cerrarConexion() 
     
     def valida_precio(self):
         while True:
@@ -184,7 +184,7 @@ class Automovil:
         conexion = Conexiones()
         conexion.abrirConexion()
         try:
-            conexion.miCursor.execute("UPDATE AUTOMOVILES SET cantidadDisponibles='cantidadDisponibles + 1' where marca='{}' and modelo='{}'".format(self.cantidadDisponibles,self.marca, self.modelo))
+            conexion.miCursor.execute("UPDATE AUTOMOVILES SET cantidadDisponibles= cantidadDisponibles + 1 where marca='{}' and modelo='{}'".format(self.marca, self.modelo))
             conexion.miConexion.commit()
             print("Cantidad disponible del auto modificada correctamente")
         except:
